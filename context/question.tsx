@@ -4,18 +4,21 @@ import { WithChildren } from '@/types/component'
 import { Question } from '@/types/question'
 import { createContext, useState } from 'react'
 
-const defaultStage = {
+const defaultStage: any = {
   currentQuestionIndex: 0,
   progressPercentage: 0,
   questions: [
     {
       question: '',
+      choice: null,
     },
     {
       question: '',
+      choice: null,
     },
     {
       question: '',
+      choice: null,
     },
   ],
 }
@@ -34,19 +37,31 @@ function QuestionContextProvider({ children }: WithChildren<{}>) {
     return Math.round((100 / questionTotalCount) * questionOrder)
   }
 
-  const toNextQuestion = (currentQuestion: Question) => {
+  const choiceQuestion = (questionIndex: number) => (choice: number) => {
+    stage.questions[questionIndex].choice = choice
+    setStage(stage)
+  }
+
+  const toNextQuestion = () => {
     const nextQuestionIndex =
       stage.currentQuestionIndex + 1 >= stage.questions.length
         ? 0
         : stage.currentQuestionIndex + 1
-    let newQuestions = [...stage.questions]
-    if (nextQuestionIndex > 0) {
-      newQuestions[stage.currentQuestionIndex] = currentQuestion
-    }
     setStage({
+      ...stage,
       currentQuestionIndex: nextQuestionIndex,
       progressPercentage: getProgressPercentage(nextQuestionIndex),
-      questions: newQuestions,
+    })
+  }
+
+  const toPreviousQuestion = () => {
+    const newQuestionIndex = stage.currentQuestionIndex - 1 < 0
+    ? 0
+    : stage.currentQuestionIndex - 1
+    setStage({
+      ...stage,
+      progressPercentage: getProgressPercentage(newQuestionIndex),
+      currentQuestionIndex: newQuestionIndex
     })
   }
 
@@ -54,7 +69,9 @@ function QuestionContextProvider({ children }: WithChildren<{}>) {
     <QuestionContext.Provider
       value={{
         ...stage,
+        choiceQuestion,
         toNextQuestion,
+        toPreviousQuestion,
       }}
     >
       {children}
