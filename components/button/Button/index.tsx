@@ -1,9 +1,9 @@
 'use client'
 
-import type { MouseEventHandler } from 'react'
-import type { WithChildren } from '@/types/component'
-import type { WithOptionalKey } from '@/types/base'
+import { useContext, type MouseEventHandler } from 'react'
+import type { WithChildren, WithType } from '@/types/component'
 import type { ButtonType } from '@/types/button'
+import { QuestionContext } from '@/context/question'
 
 function Button({
   buttonType = 'primary',
@@ -11,9 +11,9 @@ function Button({
   onClick,
   children,
 }: WithChildren<
-  WithOptionalKey<'buttonType', ButtonType> &
-    WithOptionalKey<'onClick', MouseEventHandler<HTMLButtonElement>> &
-    WithOptionalKey<'className', string>
+  WithType<'buttonType', ButtonType> &
+    WithType<'onClick', MouseEventHandler<HTMLButtonElement>> &
+    WithType<'className', string>
 >) {
   return (
     <button

@@ -1,12 +1,11 @@
-import { type WithChildren } from '@/types/component'
-import { type WithOptionalKey } from '@/types/base'
+import { WithChildren, WithType } from '@/types/component'
 
 const Card = ({
   children,
   className,
-}: WithChildren<WithOptionalKey<'className', string>>) => {
+}: WithChildren<WithType<'className', string>>) => {
   return (
-    <div className={`rounded overflow-hidden shadow-lg ${className}`}>
+    <div className={`max-w-sm rounded overflow-hidden shadow-lg ${className}`}>
       {children}
     </div>
   )
