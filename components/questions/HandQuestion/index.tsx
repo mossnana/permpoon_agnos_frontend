@@ -1,10 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { WithKey, WithOptionalKey } from '@/types/base'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Stage, Layer, Image } from 'react-konva'
 import useImage from 'use-image'
 
 const HandQuestion = ({ width, prevRegion = null, onChoice }: any) => {
+  const height = useMemo(() => {
+    return width * 1.178
+  }, [width])
   const [background] = useImage('/questions/default-finger.png')
   const [dipHighlight] = useImage('/questions/dip-highlight.png')
   const [dipActive] = useImage('/questions/dip-active.png')
@@ -12,14 +16,11 @@ const HandQuestion = ({ width, prevRegion = null, onChoice }: any) => {
   const [pipActive] = useImage('/questions/pip-active.png')
   const [mcpHighlight] = useImage('/questions/mcp-highlight.png')
   const [mcpActive] = useImage('/questions/mcp-active.png')
-
-  const [hoveredRegion, setHoveredRegion] = useState<number | null>(null)
-  const [selectedRegion, setSelectedRegion] = useState<number | null>(prevRegion)
-  useEffect(() => {
-    onChoice(selectedRegion)
-  })
-
-  const positionMapping: Record<number, any> = {
+  const regionImageMap: WithKey<
+    number,
+    WithOptionalKey<'highlight', HTMLImageElement> &
+      WithOptionalKey<'active', HTMLImageElement>
+  > = {
     1: {
       highlight: dipHighlight,
       active: dipActive,
@@ -34,9 +35,41 @@ const HandQuestion = ({ width, prevRegion = null, onChoice }: any) => {
     },
   }
 
-  const height = width * 1.178
+  const [hoveredRegion, setHoveredRegion] = useState<number | null>(null)
+  const [selectedRegion, setSelectedRegion] = useState<number | null>(
+    prevRegion
+  )
+  useEffect(() => {
+    onChoice(selectedRegion)
+  }, [onChoice, selectedRegion])
 
-  const onMouseMove = (event: any) => {
+  const renderRegion = (regionNumber: number) => {
+    const region = regionImageMap[regionNumber]
+    return (
+      <>
+        <Image
+          id={regionNumber.toString()}
+          alt="active-area"
+          image={region.active}
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+        />
+        <Image
+          id={regionNumber.toString()}
+          alt="highlight-area"
+          image={region.highlight}
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+        />
+      </>
+    )
+  }
+
+  const onHoverRegion = (event: any) => {
     const mouseY = event.evt.layerY
     const stepHeight = height / 6.5
 
@@ -52,7 +85,7 @@ const HandQuestion = ({ width, prevRegion = null, onChoice }: any) => {
     }
   }
 
-  const onClick = (event: any) => {
+  const onClickRegion = (event: any) => {
     const id = parseInt(event.target.attrs.id)
     if (selectedRegion === id) {
       setSelectedRegion(null)
@@ -65,70 +98,33 @@ const HandQuestion = ({ width, prevRegion = null, onChoice }: any) => {
     if (!selectedRegion) {
       return <></>
     }
-
-    const selected = positionMapping[selectedRegion]
-    return (
-      <>
-        <Image
-          image={selected.active}
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-        />
-        <Image
-          image={selected.highlight}
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-        />
-      </>
-    )
+    return renderRegion(selectedRegion)
   }
 
   const renderHoverRegion = () => {
     if (!hoveredRegion || hoveredRegion === selectedRegion) {
       return <></>
     }
-
-    const selected = positionMapping[hoveredRegion]
-    if (!selected) {
-      return <></>
-    }
-
-    return (
-      <>
-        <Image
-          id={`${hoveredRegion}`}
-          image={selected.active}
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-        />
-        <Image
-          id={`${hoveredRegion}`}
-          image={selected.highlight}
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-        />
-      </>
-    )
+    return renderRegion(hoveredRegion)
   }
 
   return (
     <Stage
       width={width}
       height={height}
-      onMouseMove={onMouseMove}
+      onMouseMove={onHoverRegion}
       onMouseLeave={() => setHoveredRegion(null)}
-      onClick={onClick}
+      onClick={onClickRegion}
     >
       <Layer>
-        <Image image={background} x={0} y={0} width={width} height={height} />
+        <Image
+          alt="hand-background"
+          image={background}
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+        />
         {renderSelectedRegion()}
         {renderHoverRegion()}
       </Layer>
