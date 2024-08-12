@@ -1,7 +1,7 @@
 'use client'
 
 import { WithKey, WithOptionalKey } from '@/types/base'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Stage, Layer, Image } from 'react-konva'
 import useImage from 'use-image'
 
@@ -85,6 +85,22 @@ const HandQuestion = ({ width, prevRegion = null, onChoice }: any) => {
     }
   }
 
+  const onTouchRegion = (event: any) => {
+    const mouseY = event.evt.layerY
+    const stepHeight = height / 6.5
+
+    for (let i = 1; i <= 3; i++) {
+      if (mouseY <= stepHeight * i) {
+        setSelectedRegion(i)
+        break
+      }
+
+      if (i === 3) {
+        setSelectedRegion(null)
+      }
+    }
+  }
+
   const onClickRegion = (event: any) => {
     const id = parseInt(event.target.attrs.id)
     if (selectedRegion === id) {
@@ -115,6 +131,7 @@ const HandQuestion = ({ width, prevRegion = null, onChoice }: any) => {
       onMouseMove={onHoverRegion}
       onMouseLeave={() => setHoveredRegion(null)}
       onClick={onClickRegion}
+      onTap={onTouchRegion}
     >
       <Layer>
         <Image

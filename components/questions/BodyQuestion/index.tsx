@@ -132,6 +132,8 @@ const BodyQuestion = ({ width, prevRegion = null, onChoice }: any) => {
               stroke="transparent"
               fill="rgba(0, 0, 255, 0)"
               onClick={onClickRegion(index)}
+              onTap={onClickRegion(index)}
+              onPointerEnter={onClickRegion(index)}
             />
           </Fragment>
         ))}

@@ -1,6 +1,6 @@
 'use client'
 
-import { type MouseEvent, useContext } from 'react'
+import { type MouseEvent, useContext, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { QuestionContext } from '@/context/question'
 import { Button } from '@/components/button'
@@ -22,17 +22,34 @@ export default function QuestionsPage() {
     questionContext.toPreviousQuestion()
   }
 
+  const [screenWidth, setScreenWidth] = useState(0)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setScreenWidth(window.innerWidth)
+      }
+      setScreenWidth(window.innerWidth)
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   const onClickNext = (event: MouseEvent) => {
     event.preventDefault()
     questionContext.toNextQuestion()
   }
 
   const renderQuestion = () => {
+    let windowWidth = (screenWidth * 80) / 100
+    if (windowWidth > 500) {
+      windowWidth = 500
+    }
+
     switch (questionContext.currentQuestionIndex) {
       case 1:
         return (
           <HandQuestion
-            width={500}
+            width={windowWidth}
             prevRegion={questionContext.questions[1].choice}
             onChoice={questionContext.choiceAnswer(1)}
           />
@@ -40,7 +57,7 @@ export default function QuestionsPage() {
       case 2:
         return (
           <BodyQuestion
-            width={500}
+            width={windowWidth}
             prevRegion={questionContext.questions[2].choice}
             onChoice={questionContext.choiceAnswer(2)}
           />
@@ -73,7 +90,7 @@ export default function QuestionsPage() {
   return (
     <div>
       {renderQuestion()}
-      <div className="flex items-center justify-center gap-8">
+      <div className="flex items-center justify-center gap-8 my-2">
         {renderActionButtons()}
       </div>
     </div>
