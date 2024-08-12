@@ -1,15 +1,15 @@
 'use client'
 
-import { WithChildren } from '@/types/component'
-import { Question } from '@/types/question'
 import { createContext, useState } from 'react'
+import { WithChildren } from '@/types/component'
+import { QuestionStage } from '@/types/context'
 
-const defaultStage: any = {
+const defaultStage: QuestionStage = {
   currentQuestionIndex: 0,
   progressPercentage: 0,
   questions: [
     {
-      question: '',
+      question: 'กรุณากดต่อไป',
       choice: null,
     },
     {
@@ -25,7 +25,9 @@ const defaultStage: any = {
 
 export const QuestionContext = createContext({
   ...defaultStage,
-  toNextQuestion: (currentQuestion: Question) => {},
+  choiceAnswer: (_questionIndex: number) => (_choice: number) => {},
+  toNextQuestion: () => {},
+  toPreviousQuestion: () => {},
 })
 
 function QuestionContextProvider({ children }: WithChildren<{}>) {
@@ -37,7 +39,7 @@ function QuestionContextProvider({ children }: WithChildren<{}>) {
     return Math.round((100 / questionTotalCount) * questionOrder)
   }
 
-  const choiceQuestion = (questionIndex: number) => (choice: number) => {
+  const choiceAnswer = (questionIndex: number) => (choice: number) => {
     stage.questions[questionIndex].choice = choice
     setStage(stage)
   }
@@ -69,7 +71,7 @@ function QuestionContextProvider({ children }: WithChildren<{}>) {
     <QuestionContext.Provider
       value={{
         ...stage,
-        choiceQuestion,
+        choiceAnswer,
         toNextQuestion,
         toPreviousQuestion,
       }}
