@@ -13,11 +13,11 @@ const defaultStage: QuestionStage = {
       choice: null,
     },
     {
-      question: '',
+      question: 'จุดไหนที่คุณปวดนิ้วมากที่สุด',
       choice: null,
     },
     {
-      question: '',
+      question: 'จุดไหนที่คุณปวดท้องมากที่สุด',
       choice: null,
     },
   ],

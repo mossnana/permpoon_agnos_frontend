@@ -35,13 +35,13 @@ const BodyQuestion = ({ width, prevRegion = null, onChoice }: any) => {
 
   const abs = {
     points: [
-      [242, 235], // top
-      [190, 280], // top left
-      [190, 340], // bottom left
-      [240, 370], // bottom
-      [290, 340], // bottom right
-      [290, 275], // top right
-      [240, 310], // center
+      [0.484, 0.400],
+      [0.38, 0.477],
+      [0.38, 0.578],
+      [0.48, 0.630],
+      [0.58, 0.578],
+      [0.58, 0.468],
+      [0.48, 0.528],
     ],
     highlights: [
       epigastriumHighlight,
@@ -75,11 +75,12 @@ const BodyQuestion = ({ width, prevRegion = null, onChoice }: any) => {
         [0, 0],
         [width, height],
       ])
-      const diagram = voronoiDiagram(abs.points as [number, number][])
+      const points = abs.points.map(([x, y]) => [x * width, y * height])
+      const diagram = voronoiDiagram(points as [number, number][])
       setVoronoiCells(diagram.polygons() as never[])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [background])
+  }, [background, width, height])
 
   const renderSelectedRegion = (region: number) => {
     return (
@@ -124,19 +125,20 @@ const BodyQuestion = ({ width, prevRegion = null, onChoice }: any) => {
           y={0}
         />
         {prevRegionIndex !== null && renderSelectedRegion(prevRegionIndex)}
-        {voronoiCells.map((cell: any, index: any) => (
-          <Fragment key={index}>
-            <Line
-              points={cell.flat()}
-              closed
-              stroke="transparent"
-              fill="rgba(0, 0, 255, 0)"
-              onClick={onClickRegion(index)}
-              onTap={onClickRegion(index)}
-              onPointerEnter={onClickRegion(index)}
-            />
-          </Fragment>
-        ))}
+        {voronoiCells.map((cell: any, index: any) => {
+          return (
+            <Fragment key={index}>
+              <Line
+                points={cell.flat()}
+                closed
+                stroke=""
+                fill=""
+                onClick={onClickRegion(index)}
+                onTap={onClickRegion(index)}
+              />
+            </Fragment>
+          )
+        })}
       </Layer>
     </Stage>
   )
