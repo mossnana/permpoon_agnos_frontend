@@ -27,7 +27,7 @@ const BodyQuestion = ({ width, prevRegion = null, onChoice }: any) => {
   const [suprapubicHighlight] = useImage('/questions/suprapubic-highlight.png')
   const [suprapubicActive] = useImage('/questions/suprapubic-active.png')
   const [llqHighlight] = useImage('/questions/llq-highlight.png')
-  const [llqActive] = useImage('/questions/llq-active.png')
+  const [llqActive] = useImage('/questions/llq-Active.png')
   const [luqHighlight] = useImage('/questions/luq-highlight.png')
   const [luqActive] = useImage('/questions/luq-active.png')
   const [umbilicusHighlight] = useImage('/questions/umbilicus-highlight.png')
